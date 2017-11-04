@@ -8,6 +8,10 @@ vTaskDmaMainService() : step1 : dma interrupt init, Dma_Main_INT_init();
                         step3 : for(;;), do what you like, e.g. print;
  
 */
+#include <stdio.h>
+#include <platform.h>
+#include <xil_printf.h>
+
 
 #include <semphr.h>
 #include <common/app_common.h>
