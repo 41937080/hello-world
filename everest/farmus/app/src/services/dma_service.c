@@ -14,6 +14,8 @@ vTaskDmaMainService() : step1 : dma interrupt init, Dma_Main_INT_init();
 
 
 #define DMA_IRQ_STATUS_IDLE    0x0
+#define DMA_IRQ_ID 121
+
 
 /* Type define*/
 typedef enum
@@ -47,8 +49,8 @@ static dma_instance_t dma_main_instance =
 {
   .addr0    = 0xa0000000,
   .addr1    = 0xa0000004,
-  //.width    = 0xa0000070,
-  //.height   = 0xa0000074;
+  .width    = 0xa0000070,
+  .height   = 0xa0000074;
   .size     = 0xa0000008,
   .ctrl     = 0xa000001c,
   .status   = 0xa0000020,
@@ -96,40 +98,54 @@ static void dma_print_status(dma_instance_t* inst)
 
 
 /* Public funciton */
-dma_ret_t dma_init()
+return_st_t dma_init()
 {
-  if()
+  dma_main_instance.irqBinarySemaphore = xSemaphoreCreateBinary();
+  
+  XScuGic_Connect(&InterruptController, DMA_IRQ_ID,
+                                            (Xil_ExceptionHandler) dma_irqhandler,
+                                            (void *)&dma_main_instance ));
+  XScuGic_Enable(&InterruptController, DMA_IRQ_ID);
+  
+  return return_st_success ;
 }
 
-
-
-
-
-
-
-static dma_irq_handler_inst_t dma_main_inst = 
+return_st_t dma_write_setup(dma_instance_t* inst, void* dstaddr, uint32_t width, uint32_t height, uint32_t size)
 {
-  {0 , DMA_IRQ_STATUS_IDLE}
+  Xil_Out32(inst->addr0, dstaddr);
+  Xil_Out32(inst->addr1, dstaddr);
+  Xil_Out32(inst->size,  size);
+  Xil_Out32(inst->size,  0x20001);
+  Xil_Out32(0xa0000064,  0x10ffff);
+  dma_enable(inst, 0);
+  return return_st_success ;
 }
 
-void dma_irqhandler_st(void* userdata)
+return_st_t dma_wait_for_done(dma_instance_t* inst, uint32_t timeout_ms)
 {
-  dma_irq_handler_inst_t* inst = (dma_irq_handler_inst_t*) userdata;
-  //read irq status to clear irq
-  inst->irqStatusLast = Xil_In32(0xa0000018);
-  xSemaphoreGiveFromISR(inst->irqBinaryMutex,NULL);
-  //TODO
-  //BaseType_t xHiPrioTaskWoken = 0;
-  //xSemaphoreGiveFromISR(inst->irqBinaryMutex,&xHiPrioTaskWoken);
-  //portYIELD_FROM_ISR(xHiPrioTaskWoken);
+  return_st_t ret = return_st_success;
+  //wait for done
+  if(0 == xSemaphoreTake(inst->irqBinarySemaphore, timeout_ms))
+  {
+    //print error
+    return return_st_error;
+  }
+  return return_st_success;
+  
 }
 
-
-
-static void vTaskDbgService()
+static void vTaskDmaService()
 {
-    while(1)
+  dma_init();
+  dma_write_setup(&dma_main_instance, 0x20800000, 1000,1000,0xd000000);
+  for(;;)
+  {
+    if(xSemphoreTake(dma_main_instance->irqBinarySemaphore, 1))
     {
-        if()
+      dji_print("DMA ......");  
     }
+    vTaskDelay(1);
+  }
 }
+
+
