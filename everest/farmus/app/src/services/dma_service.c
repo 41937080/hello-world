@@ -131,7 +131,7 @@ return_st_t dma_write_setup(dma_instance_t* inst, void* dstaddr, uint32_t width,
   Xil_Out32(inst->size,  size);
   Xil_Out32(inst->size,  0x20001);
   Xil_Out32(0xa0000064,  0x10ffff);
-  dma_enable(inst, 0);
+  dma_enable(inst, 1);
   return return_st_success ;
 }
 
