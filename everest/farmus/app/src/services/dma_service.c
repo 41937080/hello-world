@@ -9,17 +9,27 @@ vTaskDmaMainService() : step1 : dma interrupt init, Dma_Main_INT_init();
  
 */
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <platform.h>
 #include <xil_printf.h>
+#include <xil_io.h>
+#include <xscugic.h>
 
-
+/* */
+#include <FreeRTOS.h>
+#include <task.h>
+#include <queue.h>
 #include <semphr.h>
+
+
 #include <common/app_common.h>
 
 
 #define DMA_IRQ_STATUS_IDLE    0x0
 #define DMA_IRQ_ID 121
 
+extern XScuGic InterruptController;
 
 /* Type define*/
 typedef enum
@@ -54,15 +64,15 @@ static dma_instance_t dma_main_instance =
   .addr0    = 0xa0000000,
   .addr1    = 0xa0000004,
   .width    = 0xa0000070,
-  .height   = 0xa0000074;
+  .height   = 0xa0000074,
   .size     = 0xa0000008,
   .ctrl     = 0xa000001c,
   .status   = 0xa0000020,
   .frame_cnt= 0xa0000024,
   .int_status= 0xa0000018,
   .int_enable= 0xa0000030,
-  .data_enable= 0xa0000034
-}
+  .data_enable= 0xa0000034,
+};
 
 /* Local function */
 static void dma_enable(dma_instance_t* inst, bool enable)
@@ -102,7 +112,7 @@ static void dma_print_status(dma_instance_t* inst)
 
 
 /* Public funciton */
-return_st_t dma_init()
+return_st_t dma_main_init()
 {
   dma_main_instance.irqBinarySemaphore = xSemaphoreCreateBinary();
   
@@ -132,21 +142,21 @@ return_st_t dma_wait_for_done(dma_instance_t* inst, uint32_t timeout_ms)
   if(0 == xSemaphoreTake(inst->irqBinarySemaphore, timeout_ms))
   {
     //print error
-    return return_st_error;
+    ret = return_st_error;
   }
-  return return_st_success;
+  return ret;
   
 }
 
 static void vTaskDmaService()
 {
-  dma_init();
+  dma_main_init();
   dma_write_setup(&dma_main_instance, 0x20800000, 1000,1000,0xd000000);
   for(;;)
   {
-    if(xSemphoreTake(dma_main_instance->irqBinarySemaphore, 1))
+    if(xSemaphoreTake(dma_main_instance->irqBinarySemaphore, 1))
     {
-      dji_print("DMA ......");  
+      print("DMA ......");  
     }
     vTaskDelay(1);
   }
