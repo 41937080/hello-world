@@ -118,7 +118,7 @@ return_st_t dma_main_init()
   
   XScuGic_Connect(&InterruptController, DMA_IRQ_ID,
                                             (Xil_ExceptionHandler) dma_irqhandler,
-                                            (void *)&dma_main_instance ));
+                                            (void *)&dma_main_instance );
   XScuGic_Enable(&InterruptController, DMA_IRQ_ID);
   
   return return_st_success ;
@@ -148,13 +148,13 @@ return_st_t dma_wait_for_done(dma_instance_t* inst, uint32_t timeout_ms)
   
 }
 
-static void vTaskDmaService()
+void vTaskDmaService()
 {
   dma_main_init();
   dma_write_setup(&dma_main_instance, 0x20800000, 1000,1000,0xd000000);
   for(;;)
   {
-    if(xSemaphoreTake(dma_main_instance->irqBinarySemaphore, 1))
+    if(xSemaphoreTake(dma_main_instance.irqBinarySemaphore, 1))
     {
       print("DMA ......");  
     }
