@@ -7,3 +7,7 @@ FreeRTOS的断言功能在调试阶段是非常有用的，可以有效地检查参数错误和运行中的错误，
 一些简单的使用：
 1.判断数据是否正确：configASSERT(uxmaxcount != 0);
 2.判断函数返回值是否正确：config(status_ok == function_init());
+
+
+171216：
+ug1209中增加了isolation configuration章节，需要仔细研究一下；
