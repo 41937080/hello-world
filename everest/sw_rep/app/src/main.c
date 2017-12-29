@@ -138,7 +138,6 @@ static void vSetupTask(void *pvParameters __attribute((unused)))
 
 	//console init
 	console_t1_init();
-
 	/* Delete this task */
 	vTaskDelete(NULL);
 

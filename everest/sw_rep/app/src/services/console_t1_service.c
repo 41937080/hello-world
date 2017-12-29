@@ -32,7 +32,10 @@ int32_t test1 (int32_t argc, char *argv[])
 {
     printf("test1\r\n");
     if(argc > 1) {
-        printf("%s\r\n", argv[1]);
+        printf("help......%s\r\n", argv[1]);
+    }
+    else {
+    	printf("test1 debug\r\n");
     }
     return 1;
 }
@@ -59,7 +62,8 @@ void console_t1_init()
     char buf[512];
     char *argv[MAX_LIST];
     int32_t  argc;
-
+while(1)
+{
     for(int32_t i = 0; i < 100; i++){
         char c = getchar();
         putchar(c);	// echo back
@@ -82,3 +86,7 @@ void console_t1_init()
         }
     }
 }
+}
+
+
+
