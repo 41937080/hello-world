@@ -108,7 +108,8 @@
 #include "services/console_t1_service.h"
 
 #define TIMER_ID	1
-#define DELAY_10_SECONDS	10000UL
+//#define DELAY_10_SECONDS	10000UL
+#define DELAY_10_SECONDS	1000000UL
 #define DELAY_1_SECOND		1000UL
 #define TIMER_CHECK_THRESHOLD	9
 /*-----------------------------------------------------------*/
@@ -155,18 +156,18 @@ int main( void )
 	/* Create the two tasks.  The Tx task is given a lower priority than the
 	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
 	task as soon as the Tx task places an item in the queue. */
-	xTaskCreate( prvTxTask, ( const char * ) "Tx", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, &xTxTask );
+	//xTaskCreate( prvTxTask, ( const char * ) "Tx", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, &xTxTask );
 
-	xTaskCreate( prvRxTask, ( const char * ) "GB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, &xRxTask );
+	//xTaskCreate( prvRxTask, ( const char * ) "GB", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, &xRxTask );
 
 	/* Create the queue used by the tasks.  The Rx task has a higher priority
 	than the Tx task, so will preempt the Tx task and remove values from the
 	queue as soon as the Tx task writes to the queue - therefore the queue can
 	never have more than one item in it. */
-	xQueue = xQueueCreate( 	1,	sizeof( HWstring ) );
+	//xQueue = xQueueCreate( 	1,	sizeof( HWstring ) );
 
 	/* Check the queue was created. */
-	configASSERT( xQueue );
+	//configASSERT( xQueue );
 
 	/* Create a timer with a timer expiry of 10 seconds. The timer would expire
 	 after 10 seconds and the timer call back would get called. In the timer call back
@@ -174,15 +175,15 @@ int main( void )
 	 The tasks are deleted in the timer call back and a message is printed to convey that
 	 the example has run successfully.
 	 The timer expiry is set to 10 seconds and the timer set to not auto reload. */
-	xTimer = xTimerCreate( (const char *) "Timer", x10seconds, pdFALSE, (void *) TIMER_ID, vTimerCallback);
+	//xTimer = xTimerCreate( (const char *) "Timer", x10seconds, pdFALSE, (void *) TIMER_ID, vTimerCallback);
 
 	/* Check the timer was created. */
-	configASSERT( xTimer );
+	//configASSERT( xTimer );
 
 	/* start the timer with a block time of 0 ticks. This means as soon
 	   as the schedule starts the timer will start running and will expire after
 	   10 seconds */
-	xTimerStart( xTimer, 0 );
+	//xTimerStart( xTimer, 0 );
 
 
 
