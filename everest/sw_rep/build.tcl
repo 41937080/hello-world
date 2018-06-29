@@ -40,7 +40,7 @@ openhw app_hw/system.hdf
 createbsp -name app_bsp -hwproject app_hw -proc [get_processor_name app_hw] -os freertos901_xilinx -arch 64
 
 # Add extra compiler flag for FREERTOS_BSP
-#configbsp -bsp app_bsp -append extra_compiler_flags "-DFREERTOS_BSP"
+configbsp -bsp app_bsp -append extra_compiler_flags "-DFREERTOS_BSP"
 
 # Add libraries
 setlib -bsp app_bsp -lib xilffs
