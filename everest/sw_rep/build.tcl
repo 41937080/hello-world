@@ -40,10 +40,10 @@ openhw app_hw/system.hdf
 createbsp -name app_bsp -hwproject app_hw -proc [get_processor_name app_hw] -os freertos901_xilinx -arch 64
 
 # Add extra compiler flag for FREERTOS_BSP
-configbsp -bsp app_bsp -append extra_compiler_flags "-DFREERTOS_BSP"
+#configbsp -bsp app_bsp -append extra_compiler_flags "-DFREERTOS_BSP"
 
 # Add libraries
-setlib -bsp app_bsp -lib xilffs
+#setlib -bsp app_bsp -lib xilffs
 
 # Remove terminal on UART
 #configbsp -bsp app_bsp stdin none
@@ -51,8 +51,8 @@ setlib -bsp app_bsp -lib xilffs
 
 # Update BSP and regen
 # Changes are stored in RAM until this is done
-updatemss -mss app_bsp/system.mss
-regenbsp -bsp app_bsp
+#updatemss -mss app_bsp/system.mss
+#regenbsp -bsp app_bsp
 
 
 projects -build
